@@ -26,15 +26,21 @@
 - Java 11
 - Spring Boot 2.7.1
 - IntelliJ Ultimate 2022.1
-- Spring-Starter
+- Spring Web
+- Lombok
+- H2
+- JPA
+- MySQL
 
 
 ## API 설계
 
-|  화면  |      기능      | Method |    URL     | Request | Response |
-|:----:|:------------:|:------:|:----------:|:-----:|:--------:|
-| 메인화면 | 전체 게시글 목록 조회 |  GET   |   posts    |       |  조회 완료   |
-| 메인화면 |    게시글 조회    |  GET   | posts/{id} |   id  |   조회완료   |
-| 메인화면 |    게시글 작성    |  POST  |   posts    | 게시글 내용 |  포스팅 완료  |
-| 메인화면 |    게시글 수정    |  PUT   | posts/{id} |   id  |   수정완료   |
-| 메인화면 |    게시글 삭제    | DELETE | posts{id}  |   id  |   삭제완료   |
+|  화면  |      기능      | Method |    URL     |    Return    |
+|:----:|:------------:|:------:|:----------:|:------------:|
+| 메인화면 | 전체 게시글 목록 조회 |  GET   |   posts    | Lsit\<Post\> | 
+| 메인화면 |    게시글 조회    |  GET   | posts/{id} |     Post     | 
+| 메인화면 |    게시글 작성    |  POST  |   posts    |     Post     |
+| 메인화면 |    게시글 수정    |  PUT   | posts/{id} |     Long     |  
+| 메인화면 |    게시글 삭제    | DELETE | posts{id}  |     Long     | 
+
+
