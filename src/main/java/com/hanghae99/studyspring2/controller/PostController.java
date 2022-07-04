@@ -31,4 +31,10 @@ public class PostController {
         postRepository.deleteById(id);
         return id;
     }
+
+    @PutMapping("posts/{id}")
+    public  Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
+        postService.update(id, requestDto);
+        return id;
+    }
 }
