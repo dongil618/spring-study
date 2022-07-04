@@ -1,11 +1,13 @@
 package com.hanghae99.studyspring2.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Post extends Timestamped{
 
     @Id
@@ -28,7 +30,7 @@ public class Post extends Timestamped{
         this.contents = requestDto.getContents();
     }
 
-    public void update(MemoRequestDto requestDto) {
+    public void update(PostRequestDto requestDto) {
         this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
     }
