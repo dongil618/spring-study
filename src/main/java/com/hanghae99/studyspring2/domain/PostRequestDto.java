@@ -9,5 +9,7 @@ import lombok.Setter;
 public class PostRequestDto {
 
     private String username;
+    private String title;
+    private String password;
     private String contents;
 }
