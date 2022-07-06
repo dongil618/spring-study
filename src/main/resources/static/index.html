@@ -1,15 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모두의 포스팅</title>
-
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <title>표 테스트</title>
     <script>
         $(document).ready(function () {
             getMessages();
@@ -22,51 +24,113 @@
                 url: "/posts",
                 data: {},
                 success: function (response) {
-                    console.log(response);
                     for (let i = 0; i < response.length; i++) {
                         let post = response[i];
                         let id = post['id'];
                         let username = post['username'];
-                        let contents = post['contents'];
+                        let title = post['title'];
                         let modifiedAt = post['modifiedAt'];
-                        addHTML(id, username, contents, modifiedAt);
+                        console.log(`id : ${id}, username : ${username}, title : ${title}, modifiedAt : ${modifiedAt}`);
+                        addHTML(id, username, title, modifiedAt);
                     }
                 }
             });
         }
 
-        function addHTML(id, username, contents, modifiedAt) {
-            let tempHtml = makeMessage(id, username, contents, modifiedAt);
-            $('#posts-box').append(tempHtml);
-        }o
+        function addHTML(id, username, title, modifiedAt) {
+            console.log("addHTML이 호출되었습니다.")
+            let tempHtml = makeMessage(id, username, title, modifiedAt);
+            console.log(`tempHtml : ${tempHtml}`)
+            $('#posts-box').after(tempHtml);
+        }
 
-        function makeMessage(id, username, contents, modifiedAt, i) {
-            return `<div class="card">
-                        <!-- date/username 영역 -->
-                        <div class="metadata">
-                            <div class="date">
-                                ${modifiedAt}
+        function detailPost(id) {
+            console.log("detailPost 실행")
+            console.log(`id : ${id}`);
+            $.ajax({
+                type: "GET",
+                url: `/posts/${id}`,
+                data: {},
+                success: function (response) {
+                    let post = response;
+                    let id = post['id'];
+                    let username = post['username'];
+                    let title = post['title'];
+                    let contents = post['contents'];
+                    let modifiedAt = post['modifiedAt'];
+                    console.log(`id : ${id}, username : ${username}, title : ${title}, contents : ${contents}, modifiedAt : ${modifiedAt}`);
+                    addPostDetailHTML(id, username, title, contents, modifiedAt);
+                }
+            });
+        }
+
+        function closeDetailPost(id) {
+            console.log("closeDetailPost 실행")
+            $('.card').remove();
+            $(`#${id}-tr`).removeAttr('onclick');
+            $(`#${id}-tr`).attr('onclick', `detailPost('${id}')`);
+        }
+
+        function addPostDetailHTML(id, username, title, contents,modifiedAt) {
+            console.log("addPostDetailHTML이 호출되었습니다.")
+            let tempHtml = makePostDetail(id, username, title, contents, modifiedAt);
+            $(`#${id}-tr`).after(tempHtml);
+            $(`#${id}-tr`).removeAttr('onclick');
+            $(`#${id}-tr`).attr('onclick', `closeDetailPost('${id}')`);
+        }
+
+        function makePostDetail(id, username, title, contents, modifiedAt) {
+            console.log("makePostDetail이 호출되었습니다.")
+            return `<tr>
+                        <td colspan="4">
+                            <div class="card">
+                                <!-- title 영역 -->
+                                <div class="titledata">
+                                    <div id="${id}-title" class="title">
+                                        <h2>${title}</h2>
+                                    </div>
+                                </div>
+                                <!-- date/username 영역 -->
+                                <div class="metadata">
+                                    <div class="date">
+                                        ${modifiedAt}
+                                    </div>
+                                    <div id="${id}-username" class="username">
+                                        ${username}
+                                    </div>
+                                </div>
+                                <!-- contents 조회/수정 영역-->
+                                <div class="contents">
+                                    <div id="${id}-contents" class="text">
+                                        ${contents}
+                                    </div>
+                                    <div id="${id}-editarea" class="edit">
+                                        <textarea id="${id}-textarea" class="te-edit" name="" cols="30" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <!-- 버튼 영역-->
+                                <div class="footer">
+                                    <div class="mb-3">
+                                        <input type="password" class="form-control post-detail-password" id="${id}-inputPassword" placeholder="비밀번호를 입력해주세요"
+                                               name="password">
+                                    </div>
+                                    <img id="${id}-edit" class="icon-start-edit" src="images/edit.png" alt="" onclick="editPost('${id}')">
+                                    <img id="${id}-delete" class="icon-delete" src="images/delete.png" alt="" onclick="deleteOne('${id}')">
+                                    <img id="${id}-submit" class="icon-end-edit" src="images/done.png" alt="" onclick="submitEdit('${id}')">
+                                </div>
                             </div>
-                            <div id="${id}-username" class="username">
-                                ${username}
-                            </div>
-                        </div>
-                        <!-- contents 조회/수정 영역-->
-                        <div class="contents">
-                            <div id="${id}-contents" class="text">
-                                ${contents}
-                            </div>
-                            <div id="${id}-editarea" class="edit">
-                                <textarea id="${id}-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
-                            </div>
-                        </div>
-                        <!-- 버튼 영역-->
-                        <div class="footer">
-                            <img id="${id}-edit" class="icon-start-edit" src="images/edit.png" alt="" onclick="editPost('${id}')">
-                            <img id="${id}-delete" class="icon-delete" src="images/delete.png" alt="" onclick="deleteOne('${id}')">
-                            <img id="${id}-submit" class="icon-end-edit" src="images/done.png" alt="" onclick="submitEdit('${id}')">
-                        </div>
-                    </div>`;
+                        </td>
+                    </tr>`;
+        }
+
+        function makeMessage(id, username, title, modifiedAt) {
+            console.log("makeMessage가 호출되었습니다.")
+            return `<tr id="${id}-tr" onclick="detailPost('${id}')" class="tr-hover">
+                        <th scope="row">${id}</th>
+                        <td>${username}</td>
+                        <td>${title}</td>
+                        <td>${modifiedAt}</td>
+                    </tr>`;
         }
 
         function isValidContents(contents) {
@@ -115,6 +179,7 @@
             $(`#${id}-editarea`).show();
             $(`#${id}-submit`).show();
             $(`#${id}-delete`).show();
+            $(`#${id}-inputPassword`).show();
 
             $(`#${id}-contents`).hide();
             $(`#${id}-edit`).hide();
@@ -124,6 +189,7 @@
             $(`#${id}-editarea`).hide();
             $(`#${id}-submit`).hide();
             $(`#${id}-delete`).hide();
+            $(`#${id}-inputPassword`).hide();
 
             $(`#${id}-contents`).show();
             $(`#${id}-edit`).show();
@@ -132,10 +198,11 @@
         function submitEdit(id) {
             let username = $(`#${id}-username`).text().trim();
             let contents = $(`#${id}-textarea`).val().trim();
+            let password = $(`#${id}-inputPassword`).val().trim();
             if (isValidContents(contents) == false) {
                 return;
             }
-            let data = {'username': username, 'contents': contents};
+            let data = {'username': username, 'password': password, 'contents': contents};
 
             $.ajax({
                 type: "PUT",
@@ -143,24 +210,37 @@
                 contentType: "application/json",
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert('메시지 변경에 성공하였습니다.');
-                    window.location.reload();
+                    if(response == 0){
+                        alert('비밀번호가 일치하지 않습니다.');
+                        return;
+                    } else {
+                        alert('메시지 변경에 성공하였습니다.');
+                        window.location.reload();
+                    }
                 }
             });
         }
 
         function deleteOne(id) {
+            let password = $(`#${id}-inputPassword`).val().trim();
+            let data = {'password': password};
             $.ajax({
                 type: "DELETE",
                 url: `/posts/${id}`,
+                contentType: "application/json",
+                data: JSON.stringify(data),
                 success: function (response) {
-                    alert('메시지 삭제에 성공하였습니다.');
-                    window.location.reload();
+                    if(response == 0){
+                        alert('비밀번호가 일치하지 않습니다.');
+                        return;
+                    } else {
+                        alert('메시지 삭제에 성공하였습니다.');
+                        window.location.reload();
+                    }
                 }
             })
         }
     </script>
-
     <style>
         @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
 
@@ -173,12 +253,12 @@
         }
 
         .wrap {
-            width: 538px;
+            width: 600px;
             margin: 10px auto;
         }
 
         #contents {
-            width: 538px;
+            width: 600px;
         }
 
         .area-write {
@@ -226,7 +306,7 @@
             width: 217px;
             height: 48px;
             font-family: 'Noto Sans KR', sans-serif;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             font-stretch: normal;
             font-style: normal;
@@ -261,7 +341,7 @@
         }
 
         .card {
-            width: 538px;
+            min-width: 538px;
             border-radius: 5px;
             background-color: #ffffff;
             margin-bottom: 12px;
@@ -338,6 +418,7 @@
         .footer img.icon-delete {
             cursor: pointer;
             position: absolute;
+            display: none;
             bottom: 12px;
             right: 19px;
             width: 14px;
@@ -347,9 +428,17 @@
         #cards-box {
             margin-top: 12px;
         }
+
+        .tr-hover:hover {
+            background-color: #dee2e6;
+            cursor: pointer;
+        }
+
+        .post-detail-password{
+            display: none;
+        }
     </style>
 </head>
-
 <body>
 <div class="background-header">
 
@@ -390,49 +479,34 @@
                                    placeholder="제목을 입력해주세요" name="title">
                         </div>
                         <div class="mb-3">
-                            <textarea class="form-control" cols="30" rows="10" id="contents" placeholder="공유하고 싶은 소식을 입력해주세요" name="contents" style="max-width: 100%"></textarea>
+                            <textarea class="form-control" cols="30" rows="10" id="contents"
+                                      placeholder="공유하고 싶은 소식을 입력해주세요" name="contents"
+                                      style="max-width: 100%"></textarea>
                         </div>
                         <div class="mb-3">
                             <input type="password" class="form-control" id="inputPassword" placeholder="비밀번호를 입력해주세요"
                                    name="password">
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="writePost()">작성하기</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="writePost()">작성하기</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="posts-box" class="area-read">
-        <div class="card">
-            <!-- date/username 영역 -->
-            <div class="metadata">
-                <div class="date">
-                    October 10, 2020
-                </div>
-                <div class="username">
-                    anonymous
-                </div>
-            </div>
-            <!-- contents 조회/수정 영역-->
-            <div class="contents">
-                <div id="1-contents" class="text">
-                    dsafnkalfklewakflekelafkleajfkleafkldsankflenwaklfnekwlafneklwanfkelawnfkelanfkleanfklew
-                </div>
-                <div id="1-editarea" class="edit">
-                    <textarea id="1-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
-                </div>
-            </div>
-            <!-- 버튼 영역-->
-            <div class="footer">
-                <img id="1-edit" class="icon-start-edit" src="images/edit.png" alt="" onclick="editPost('1')">
-                <img id="1-delete" class="icon-delete" src="images/delete.png" alt="" onclick="deleteOne('1')">
-                <img id="1-submit" class="icon-end-edit" src="images/done.png" alt="" onclick="submitEdit('1')">
-            </div>
-        </div>
-    </div>
-</div>
+    <table class="table" style="width:600px; background-color: #ffffff; margin-top : 20px;">
+        <thead>
+        <tr>
+            <th scope="col">No.</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">날짜</th>
+        </tr>
+        </thead>
+        <tbody id="posts-box">
+        </tbody>
+    </table>
 </body>
-
 </html>
