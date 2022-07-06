@@ -34,6 +34,11 @@ public class PostController {
         return postRepository.findAllByOrderByModifiedAtDesc();
     }
 
+    @GetMapping("/posts/{id}")
+    public Optional<Post> getPost(@PathVariable Long id){
+        return postRepository.findById(id);
+    }
+
     @DeleteMapping("/posts/{id}")
     public Long deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto){
         Optional<Post> post = postRepository.findById(id);
