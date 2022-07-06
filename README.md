@@ -23,7 +23,7 @@
      - Ubuntu EC2 를 구매한 뒤, 8080 포트와 80번 포트를 연결하여 포트 번호 없이도 서비스에 접속 가능하게 하기
 
 ### 환경
-- Java 11
+- Java 8
 - Spring Boot 2.7.1
 - IntelliJ Ultimate 2022.1
 - Spring Web
