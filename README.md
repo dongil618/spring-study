@@ -2,6 +2,10 @@
 
 ## 프로젝트 명 : 스프링 입문 주차 개인 과제
 
+### 유튜브 영상 및 과제 링크
+- <a href="https://youtu.be/x1WEjLpU8Cw" target="_blank">스프링 입문 주차 개인 과제 유튜브 영상</a>
+- <a href="http://s-f-s.shop" target="_blank">http://s-f-s.shop</a>
+
 ### 요구사항
 
 - 서비스 완성
